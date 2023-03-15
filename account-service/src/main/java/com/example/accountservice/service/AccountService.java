@@ -58,10 +58,17 @@ public class AccountService {
     public void updateBalance(UpdateBalanceRequestDto request) {
         Account sender = getAccountByAccountNumber(request.getSender());
         Account receiver = getAccountByAccountNumber(request.getReceiver());
-        sender.setBalance(new BigDecimal(sender.getBalance().intValue() - request.getAmount().intValue()));
-        receiver.setBalance(new BigDecimal(receiver.getBalance().intValue() + request.getAmount().intValue()));
-        repository.save(sender);
-        repository.save(receiver);
+        if(sender.equals(receiver)) {
+            receiver.setBalance(new BigDecimal(receiver.getBalance().intValue() + request.getAmount().intValue()));
+            repository.save(receiver);
+        } else {
+            sender.setBalance(new BigDecimal(sender.getBalance().intValue() - request.getAmount().intValue()));
+            receiver.setBalance(new BigDecimal(receiver.getBalance().intValue() + request.getAmount().intValue()));
+            repository.save(sender);
+            repository.save(receiver);
+        }
+
+
     }
 
 }

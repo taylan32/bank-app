@@ -4,6 +4,7 @@ import com.example.transactionservice.client.AccountServiceClient;
 import com.example.transactionservice.client.CustomerServiceClient;
 import com.example.transactionservice.dto.*;
 import com.example.transactionservice.exception.InSufficientBalanceException;
+import com.example.transactionservice.exception.InvalidSenderException;
 import com.example.transactionservice.model.Transaction;
 import com.example.transactionservice.model.TransactionType;
 import com.example.transactionservice.repository.TransactionRepository;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -32,8 +35,12 @@ public class TransactionService {
         AccountDto sender = accountServiceClient.getByAccountNumber(request.getSender()).getBody();
         AccountDto receiver = accountServiceClient.getByAccountNumber(request.getReceiver()).getBody();
 
-        checkIfBalanceIsSufficient(sender.getBalance(), request.getAmount());
-        Transaction transaction = transactionRepository.save(new Transaction(
+        if(!request.getTransactionType().equals(TransactionType.INITIAL)) {
+            checkIfBalanceIsSufficient(sender.getBalance(), request.getAmount());
+        } else {
+            checkIfSenderAndReceiverSame(sender.getAccountNumber(), receiver.getAccountNumber());
+        }
+        Transaction transaction = new Transaction(
                 null,
                 sender.getAccountNumber(),
                 receiver.getAccountNumber(),
@@ -41,12 +48,14 @@ public class TransactionService {
                 null,
                 request.getTransactionMessage(),
                 request.getTransactionType()
-        ));
+        );
+        transactionRepository.save(transaction);
         accountServiceClient.updateBalance(new UpdateBalanceRequestDto(
                 sender.getAccountNumber(),
                 receiver.getAccountNumber(),
-                request.getAmount())
-        );
+                request.getAmount()
+        ));
+
 
     }
 
@@ -71,11 +80,31 @@ public class TransactionService {
 
     }
 
+    public List<TransactionDto> getAllTransactions() {
+        return transactionRepository.findAll()
+                .stream()
+                .map(t -> new TransactionDto(
+                        t.getId(),
+                        customerServiceClient.getById(t.getSender()).getBody(),
+                        customerServiceClient.getById(t.getReceiver()).getBody(),
+                        t.getTransactionDate(),
+                        t.getTransactionType(),
+                        t.getAmount(),
+                        t.getTransactionMessage())
+                ).collect(Collectors.toList());
+    }
+
     private void checkIfBalanceIsSufficient(BigDecimal balance, BigDecimal transactionAmount) {
         if(!(balance.compareTo(transactionAmount) >= 0)) {
             throw new InSufficientBalanceException("Sender account do not have enough amount of money.");
         }
 
+    }
+
+    private void checkIfSenderAndReceiverSame(String sender, String receiver) {
+        if(!sender.equals(receiver)) {
+            throw new InvalidSenderException("Sender and receiver should be the same for the transaction type of initial.");
+        }
     }
 
 }

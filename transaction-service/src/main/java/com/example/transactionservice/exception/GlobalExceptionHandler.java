@@ -42,4 +42,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(InvalidSenderException.class)
+    public ResponseEntity<Object> handleInSufficientBalanceException(InvalidSenderException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Invalid sender.");
+        error.put("timestamp", new Date().toString());
+        error.put("details", exception.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
 }
