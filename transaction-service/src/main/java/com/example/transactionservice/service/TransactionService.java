@@ -63,8 +63,8 @@ public class TransactionService {
         Transaction transaction = findTransactionById(id);
         TransactionDto transactionDto = new TransactionDto(
                 transaction.getId(),
-                customerServiceClient.getById(transaction.getSender()).getBody(),
-                customerServiceClient.getById(transaction.getReceiver()).getBody(),
+                accountServiceClient.getByAccountNumber(transaction.getSender()).getBody(),
+                accountServiceClient.getByAccountNumber(transaction.getReceiver()).getBody(),
                 transaction.getTransactionDate(),
                 transaction.getTransactionType(),
                 transaction.getAmount(),
@@ -85,14 +85,16 @@ public class TransactionService {
                 .stream()
                 .map(t -> new TransactionDto(
                         t.getId(),
-                        customerServiceClient.getById(t.getSender()).getBody(),
-                        customerServiceClient.getById(t.getReceiver()).getBody(),
+                        accountServiceClient.getByAccountNumber(t.getSender()).getBody(),
+                        accountServiceClient.getByAccountNumber(t.getReceiver()).getBody(),
                         t.getTransactionDate(),
                         t.getTransactionType(),
                         t.getAmount(),
                         t.getTransactionMessage())
                 ).collect(Collectors.toList());
     }
+
+
 
     private void checkIfBalanceIsSufficient(BigDecimal balance, BigDecimal transactionAmount) {
         if(!(balance.compareTo(transactionAmount) >= 0)) {

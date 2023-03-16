@@ -15,7 +15,7 @@ import javax.validation.Valid;
 public interface AccountServiceClient {
 
     @PostMapping("/")
-    ResponseEntity<AccountDto> createAccount(@RequestBody @Valid CreateAccountRequestDto request);
+    ResponseEntity<AccountDto> createAccount();
 
     @GetMapping("/getById/{id}")
     ResponseEntity<AccountDto> getById(@PathVariable String id);

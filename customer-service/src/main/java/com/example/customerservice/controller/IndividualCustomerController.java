@@ -4,6 +4,8 @@ import com.example.customerservice.dto.AddAccountRequest;
 import com.example.customerservice.dto.CreateIndividualCustomerRequest;
 import com.example.customerservice.dto.IndividualCustomerDto;
 import com.example.customerservice.service.IndividualCustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/v1/api/individual-customer")
 public class IndividualCustomerController {
 
+    private final Logger logger = LoggerFactory.getLogger(IndividualCustomerService.class);
     private final IndividualCustomerService customerService;
 
 
@@ -24,6 +27,7 @@ public class IndividualCustomerController {
     @PostMapping("/")
     public ResponseEntity<Void> createIndividualCustomer(@RequestBody @Valid CreateIndividualCustomerRequest request) {
         customerService.createIndividualCustomer(request);
+        logger.info("Customer created.");
         return ResponseEntity.noContent().build();
     }
 
@@ -40,6 +44,7 @@ public class IndividualCustomerController {
     @PutMapping("/add-account")
     public ResponseEntity<Void> addAccountToCustomer(@RequestBody @Valid AddAccountRequest request) {
         customerService.addAccountToCustomer(request);
+        logger.info("Account added to customer with id: " + request.getCustomerId());
         return ResponseEntity.noContent().build();
     }
 

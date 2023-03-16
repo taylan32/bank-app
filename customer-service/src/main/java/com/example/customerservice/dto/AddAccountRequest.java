@@ -16,8 +16,4 @@ public class AddAccountRequest {
     @NotBlank(message = "Customer cannot be null")
     private String customerId;
 
-    @NotNull(message = "Initial balance cannot be null")
-    private BigDecimal initialBalance;
-    //@NotBlank(message = "Account cannot be null")
-  //  private String accountId;
 }

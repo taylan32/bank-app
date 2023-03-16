@@ -23,12 +23,12 @@ public class AccountService {
         this.converter = converter;
     }
 
-    public AccountDto createAccount(CreateAccountRequestDto request) {
+    public AccountDto createAccount() {
         return converter.convert(repository.save(new Account
                 (
                         null,
                         UUID.randomUUID().toString(),
-                        request.getInitialBalance(),
+                        BigDecimal.ZERO,
                         null,
                         null,
                         false)

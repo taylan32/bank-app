@@ -21,8 +21,8 @@ public class AccountController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<AccountDto> createAccount(@RequestBody @Valid CreateAccountRequestDto request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(request));
+    public ResponseEntity<AccountDto> createAccount() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount());
     }
 
     @GetMapping("/getById/{id}")

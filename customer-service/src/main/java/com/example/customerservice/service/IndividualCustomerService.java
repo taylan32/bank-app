@@ -95,9 +95,7 @@ public class IndividualCustomerService {
     }
 
     public void addAccountToCustomer(AddAccountRequest request) {
-        String accountNumber = accountServiceClient.createAccount(
-                new CreateAccountRequestDto(request.getInitialBalance())
-        ).getBody().getAccountNumber();
+        String accountNumber = accountServiceClient.createAccount().getBody().getAccountNumber();
         IndividualCustomer customer = findIndividualCustomerById(request.getCustomerId());
         customer.getAccounts().add(accountNumber);
         individualCustomerRepository.save(customer);

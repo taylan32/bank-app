@@ -14,8 +14,8 @@ import java.util.Date;
 public class TransactionDto {
 
     private String id;
-    private IndividualCustomerDto sender;
-    private IndividualCustomerDto receiver;
+    private AccountDto sender;
+    private AccountDto receiver;
     private Date transactionDate;
     private TransactionType transactionType;
     private BigDecimal amount;
